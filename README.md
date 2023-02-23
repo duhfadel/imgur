@@ -1,16 +1,11 @@
-# imgur
+# ImgurImage Test!
 
-A new Flutter project.
+This project was made for a tech test.
 
-## Getting Started
+ I don't have apple devices, so I can't guarantee full functionality on these devices.
+ 
+This app is an API Rest that gets information from imgur.com and brings a list of trending topic images, you can search for any subject using the search bar and it will save your search terms, but you can delete them easily clicking on the delete button.
+ 
+You can favorite and remove from favorite the images you pick using the IconButton.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+I hope you enjoy it, any doubt, please let me know.
