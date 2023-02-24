@@ -219,46 +219,58 @@ class _HomePageViewState extends State<HomePageView> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding: EdgeInsets.all(minimumSize),
-                  child: Text(
-                    state.listImages[index].title,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: FadeInImage.assetNetwork(
-                      placeholder: placeholderPath,
-                      image:
-                          state.listImages[index].imagesDetails?[0].link ?? '',
-                      fit: BoxFit.fitWidth,
-                    ),
-                  ),
-                ),
+                _gridViewItemText(state, index),
+                _gridViewItemImage(state, index),
                 SizedBox(
                   height: smallSize,
                 )
               ],
             ),
-            Positioned(
-              bottom: minimumSize,
-              right: minimumSize,
-              child: IconButton(
-                  onPressed: () {
-                    homePageCubit.addFavorite(state.listImages[index]);
-                  },
-                  icon: Icon(
-                    Icons.favorite,
-                    color: (state.listImages[index].favorite)
-                        ? Colors.red
-                        : Colors.white,
-                  )),
-            )
+            _gridViewItemIconButton(homePageCubit, state, index)
           ],
         ),
       ),
     );
+  }
+
+  Widget _gridViewItemText(HomePageState state, int index) {
+    return Padding(
+                padding: EdgeInsets.all(minimumSize),
+                child: Text(
+                  state.listImages[index].title,
+                  textAlign: TextAlign.center,
+                ),
+              );
+  }
+
+  Widget _gridViewItemImage(HomePageState state, int index) {
+    return Expanded(
+                child: Center(
+                  child: FadeInImage.assetNetwork(
+                    placeholder: placeholderPath,
+                    image:
+                        state.listImages[index].imagesDetails?[0].link ?? '',
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+              );
+  }
+
+  Widget _gridViewItemIconButton(HomePageCubit homePageCubit, HomePageState state, int index) {
+    return Positioned(
+            bottom: minimumSize,
+            right: minimumSize,
+            child: IconButton(
+                onPressed: () {
+                  homePageCubit.addFavorite(state.listImages[index]);
+                },
+                icon: Icon(
+                  Icons.favorite,
+                  color: (state.listImages[index].favorite)
+                      ? Colors.red
+                      : Colors.white,
+                )),
+          );
   }
 
   Widget _buildSearchbar(HomePageCubit homePageCubit, BuildContext context) {
@@ -268,96 +280,108 @@ class _HomePageViewState extends State<HomePageView> {
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                  onPressed: () {
-                    homePageCubit.refreshLists();
-                    scaffoldKey.currentState?.openDrawer();
-                  },
-                  icon: const Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                  )),
+              _buildSearchBarFavoriteIcon(homePageCubit),
               SizedBox(
                 width: smallSize,
               ),
-              SizedBox(
-                  height: extraMediumSize,
-                  width: extraLargeSize,
-                  child: RawAutocomplete<String>(
-                    focusNode: _focusNode,
-                    textEditingController: _queryController,
-                    optionsBuilder: (TextEditingValue textEditingValue) {
-                      return state.listSearches.where((String option) {
-                        return option
-                            .contains(textEditingValue.text.toLowerCase());
-                      });
-                    },
-                    fieldViewBuilder: (BuildContext context,
-                        TextEditingController queryController,
-                        FocusNode focusNode,
-                        VoidCallback onFieldSubmitted) {
-                      return TextFormField(
-                        controller: queryController,
-                        focusNode: focusNode,
-                        onFieldSubmitted: (String value) {
-                          onFieldSubmitted();
-                        },
-                      );
-                    },
-                    optionsViewBuilder: (BuildContext context,
-                        AutocompleteOnSelected<String> onSelected,
-                        Iterable<String> options) {
-                      return Align(
-                        alignment: Alignment.topLeft,
-                        child: Material(
-                          elevation: 4.0,
-                          child: SizedBox(
-                            height: extraLargeSize,
-                            width: extraExtraLargeSize,
-                            child: ListView.builder(
-                              padding: EdgeInsets.all(minimumSize),
-                              itemCount: state.listSearches.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                final String option =
-                                    state.listSearches.elementAt(index);
-                                return Row(
-                                  children: [
-                                    GestureDetector(
-                                        onTap: () => onSelected(option),
-                                        child: Text(option)),
-                                    Expanded(child: Container()),
-                                    IconButton(
-                                        onPressed: () => homePageCubit
-                                            .removeRecentSearch(option),
-                                        icon: const Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                        )),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  )),
+              _buildSearchBarField(state, homePageCubit),
               SizedBox(
                 width: smallSize,
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    if (_queryController.text.isNotEmpty) {
-                      homePageCubit.searchImages(_queryController.text);
-                      homePageCubit.addRecentSearch(_queryController.text);
-                    } else {
-                      homePageCubit.fetchMostPopularImages();
-                    }
-                  },
-                  child: const Icon(Icons.search)),
+              _buildSearchBarSearchButton(homePageCubit),
             ],
           );
         });
+  }
+
+  Widget _buildSearchBarSearchButton(HomePageCubit homePageCubit) {
+    return ElevatedButton(
+                onPressed: () {
+                  if (_queryController.text.isNotEmpty) {
+                    homePageCubit.searchImages(_queryController.text);
+                    homePageCubit.addRecentSearch(_queryController.text);
+                  } else {
+                    homePageCubit.fetchMostPopularImages();
+                  }
+                },
+                child: const Icon(Icons.search));
+  }
+
+  Widget _buildSearchBarField(HomePageState state, HomePageCubit homePageCubit) {
+    return SizedBox(
+                height: extraMediumSize,
+                width: extraLargeSize,
+                child: RawAutocomplete<String>(
+                  focusNode: _focusNode,
+                  textEditingController: _queryController,
+                  optionsBuilder: (TextEditingValue textEditingValue) {
+                    return state.listSearches.where((String option) {
+                      return option
+                          .contains(textEditingValue.text.toLowerCase());
+                    });
+                  },
+                  fieldViewBuilder: (BuildContext context,
+                      TextEditingController queryController,
+                      FocusNode focusNode,
+                      VoidCallback onFieldSubmitted) {
+                    return TextFormField(
+                      controller: queryController,
+                      focusNode: focusNode,
+                      onFieldSubmitted: (String value) {
+                        onFieldSubmitted();
+                      },
+                    );
+                  },
+                  optionsViewBuilder: (BuildContext context,
+                      AutocompleteOnSelected<String> onSelected,
+                      Iterable<String> options) {
+                    return Align(
+                      alignment: Alignment.topLeft,
+                      child: Material(
+                        elevation: 4.0,
+                        child: SizedBox(
+                          height: extraLargeSize,
+                          width: extraExtraLargeSize,
+                          child: ListView.builder(
+                            padding: EdgeInsets.all(minimumSize),
+                            itemCount: state.listSearches.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final String option =
+                                  state.listSearches.elementAt(index);
+                              return Row(
+                                children: [
+                                  GestureDetector(
+                                      onTap: () => onSelected(option),
+                                      child: Text(option)),
+                                  Expanded(child: Container()),
+                                  IconButton(
+                                      onPressed: () => homePageCubit
+                                          .removeRecentSearch(option),
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      )),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ));
+  }
+
+  Widget _buildSearchBarFavoriteIcon(HomePageCubit homePageCubit) {
+    return IconButton(
+                onPressed: () {
+                  homePageCubit.refreshLists();
+                  scaffoldKey.currentState?.openDrawer();
+                },
+                icon: const Icon(
+                  Icons.favorite,
+                  color: Colors.red,
+                ));
   }
 }
 
