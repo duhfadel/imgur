@@ -14,7 +14,7 @@ class HomePageProvider extends StatelessWidget {
       create: (context) => HomePageCubit(
           imagesRepository: context.read<ImagesRepository>(),
           favoritesRepository: context.read<FavoritesRepository>()),
-      child: HomePageView(),
+      child: const HomePageView(),
     );
   }
 }
