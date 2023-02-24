@@ -10,6 +10,7 @@
     "addFavorite": "Add to Favorites",
     "addedFavorite": "Image added to favorites",
     "errorFavorite":  "Error adding image to favorites",
-    "searchHint": "Search here"
+    "searchHint": "Search here",
+    "errorFetchImages": "Failed to search images"
 
   }

@@ -1,11 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:imgur/ui/home_page/cubit/home_cubit.dart';
 import 'package:imgur/ui/home_page/cubit/home_state.dart';
 import 'package:imgur/ui/home_page/models/imgur_image.dart';
 import 'package:imgur/resources/margins.dart';
-import 'package:imgur/ui/details_page/details.dart';
 
 class HomePageView extends StatefulWidget {
   const HomePageView({super.key});
@@ -93,13 +93,8 @@ class _HomePageViewState extends State<HomePageView> {
   Widget _buildFavoriteItem(
       BuildContext context, ImgurImage favorite, HomePageCubit homePageCubit) {
     return InkWell(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => DetailsPage(
-                      imgurImage: favorite, homePageCubit: homePageCubit)));
-        },
+        onTap: () => context.go('/details',
+            extra: {'homePageCubit': homePageCubit, 'imgurImage': favorite}),
         onLongPress: () {
           _buildShowDialog(context, favorite, homePageCubit);
         },
@@ -211,14 +206,12 @@ class _HomePageViewState extends State<HomePageView> {
   Widget _gridViewItem(HomePageState state, int index, BuildContext context,
       HomePageCubit homePageCubit) {
     return InkWell(
-      key: ValueKey<String>(
-          state.listImages[index].id + '${state.listImages[index].favorite}'),
-      onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => DetailsPage(
-                  imgurImage: state.listImages[index],
-                  homePageCubit: homePageCubit))),
+      key: ValueKey<String>('${state.listImages[index].id}'
+          '${state.listImages[index].favorite}'),
+      onTap: () => context.go('/details', extra: {
+        'homePageCubit': homePageCubit,
+        'imgurImage': state.listImages[index]
+      }),
       child: Card(
         child: Stack(
           children: [
@@ -236,7 +229,7 @@ class _HomePageViewState extends State<HomePageView> {
                 Expanded(
                   child: Center(
                     child: FadeInImage.assetNetwork(
-                      placeholder: 'lib/resources/images/placeholder.png',
+                      placeholder: placeholderPath,
                       image:
                           state.listImages[index].imagesDetails?[0].link ?? '',
                       fit: BoxFit.fitWidth,
@@ -248,16 +241,20 @@ class _HomePageViewState extends State<HomePageView> {
                 )
               ],
             ),
-            IconButton(
-                onPressed: () {
-                  homePageCubit.addFavorite(state.listImages[index]);
-                },
-                icon: Icon(
-                  Icons.favorite,
-                  color: (state.listImages[index].favorite)
-                      ? Colors.red
-                      : Colors.white,
-                ))
+            Positioned(
+              bottom: minimumSize,
+              right: minimumSize,
+              child: IconButton(
+                  onPressed: () {
+                    homePageCubit.addFavorite(state.listImages[index]);
+                  },
+                  icon: Icon(
+                    Icons.favorite,
+                    color: (state.listImages[index].favorite)
+                        ? Colors.red
+                        : Colors.white,
+                  )),
+            )
           ],
         ),
       ),
@@ -363,3 +360,5 @@ class _HomePageViewState extends State<HomePageView> {
         });
   }
 }
+
+String placeholderPath = 'lib/resources/images/placeholder.png';

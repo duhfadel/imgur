@@ -1,4 +1,4 @@
-import 'package:imgur/data/network/network_manager.dart';
+import 'package:imgur/data/remote_api/imgur_api.dart';
 import 'package:imgur/ui/home_page/models/imgur_image.dart';
 
 abstract class DataService {

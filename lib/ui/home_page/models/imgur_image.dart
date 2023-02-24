@@ -69,7 +69,7 @@ class ImgurImage {
     int? views,
     String? description,
     List<Images>? imagesDetails,
-    bool? boolFavorite,
+    bool? favorite,
   }) {
     return ImgurImage(
       id: this.id,

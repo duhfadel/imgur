@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:imgur/ui/home_page/cubit/home_cubit.dart';
 import 'package:imgur/ui/home_page/models/imgur_image.dart';
 import 'package:imgur/resources/margins.dart';
@@ -34,7 +35,7 @@ class DetailsPage extends StatelessWidget {
         (imgurImage.description != null)
             ? Text(imgurImage.description as String)
             : const SizedBox.shrink(),
-        Text('imageViews'.tr(namedArgs:{'number':'${imgurImage.views}'})),
+        Text('imageViews'.tr(namedArgs: {'number': '${imgurImage.views}'})),
         SizedBox(
           height: minimumSize,
         ),
@@ -51,7 +52,7 @@ class DetailsPage extends StatelessWidget {
     );
   }
 
-  Expanded _buildImage() {
+  Widget _buildImage() {
     return Expanded(
       child: FadeInImage.assetNetwork(
         placeholder: 'lib/resources/images/placeholder.png',
@@ -65,7 +66,7 @@ class DetailsPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.go('/'),
             icon: Icon(
               Icons.arrow_back,
               size: extraMediumSize,
@@ -77,20 +78,7 @@ class DetailsPage extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ),
-        ElevatedButton(
-            onPressed: () async {
-              try {
-                await homePageCubit.addFavorite(imgurImage);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('addedFavorite'.tr())),
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('errorFavorite'.tr())),
-                );
-              }
-            },
-            child: Text('addFavorite'.tr())),
+        const SizedBox.shrink()
       ],
     );
   }

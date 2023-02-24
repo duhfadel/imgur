@@ -41,6 +41,10 @@ class HomePageCubit extends Cubit<HomePageState> {
     return currentPage;
   }
 
+  int resetPage() {
+   return currentPage = 0;
+  }
+
   Future<void> searchImages(String query, {int? page}) async {
     emit(state.copyWith(isLoading: true));
     try {
@@ -73,8 +77,7 @@ class HomePageCubit extends Cubit<HomePageState> {
   Future<void> refreshLists() async {
     setFavorites = await favoritesRepository.getFavorites();
     emit(state.copyWith(
-        listFavorites: setFavorites.toList(),
-        listImages: _matchFavorites()));
+        listFavorites: setFavorites.toList(), listImages: _matchFavorites()));
   }
 
   Future<void> addFavorite(ImgurImage favorite) async {
